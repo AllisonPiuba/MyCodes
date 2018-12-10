@@ -11,18 +11,27 @@ except:
     print("Deu ruim ai irmao")
     
 
-def grav(deltax, deltay):
+def grav(deltax, deltay, m1, m2):
    d = math.sqrt((deltax)**2 + (deltay)**2)
    u = [(deltax/d) , (deltay/d)]
+   G = 6.673*10**(2)
    
-   return d, u
+   # may the force be with you
+   F = (G * m1 * m2)/d**2
+   
+   return d, u, F
 
 largura = 1024
 altura = 720
-tamanho1=randrange(5, 15)
+tamanho1=randrange(5, 15) 
 tamanho2=randrange(5, 15)
+m1 = tamanho1
+m2 = tamanho2
+vel1 = 0
+vel2 = 0
+acc1 = 0
+acc2 = 0
 
-linha=  1
 pos_x=randrange(5, largura)
 pos_y=randrange(5, altura)
 pos_w=randrange(5, largura)
@@ -36,22 +45,42 @@ pg.display.set_caption("bolinha se mexendo, ou quase")
 
 mexer = True
 opa = False
+
+pos_x_anterior = pos_x
+pos_y_anterior = pos_y
+pos_w_anterior = pos_w
+pos_z_anterior = pos_z
+troca_em_x = False
+troca_em_y = False
+colisao = False
+
 while mexer:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             mexer = False   
-    fundo.fill(preto)       
-    #pg.draw.rect(fundo,laranja,[pos_x, pos_y,tamanho,tamanho])
-    ##fazer elipse como alternativa de solução de numeros reais
+    fundo.fill(preto)     
+    
     deltax = (pos_x - pos_w)
     deltay = (pos_y - pos_z)
     
-    d, u = grav(deltax, deltay)
+    if (pos_x >= pos_w and pos_x_anterior < pos_w_anterior):
+        troca_em_x = True
+        
+    if (pos_y >= pos_z and pos_y_anterior < pos_z_anterior):
+        troca_em_y = True
+ 
+    d, u, F = grav(deltax, deltay, m1, m2)
     
-    if (d <= tamanho1 + tamanho2):
-        #bolota1 = pg.draw.circle(fundo, preto, [pos_x, pos_y], tamanho1)
-        #bolota2 = pg.draw.circle(fundo, preto, [pos_w, pos_z], tamanho2)
-
+    colisao = d <= tamanho1 + tamanho2
+    
+    pos_x_anterior = pos_x
+    pos_y_anterior = pos_y
+    pos_w_anterior = pos_w
+    pos_z_anterior = pos_z
+    
+    
+    if (colisao or troca_em_x or troca_em_y):
+             
         if tamanho1 > tamanho2:
             bolota3 = pg.draw.circle(fundo, red, [pos_x, pos_y], tamanho3)
         else:
@@ -59,14 +88,25 @@ while mexer:
         
     else:
         
-        vel1 = 5
-        vel2 = 5
+        acc1 = F / m1
+        acc2 = F / m2
         
-        pos_x -= int(u[0] * vel1)
-        pos_y -= int(u[1] * vel1)
+        vel1 = vel1 + acc1
+        vel2 = vel2 + acc2
         
-        pos_w += int(u[0] * vel2)
-        pos_z += int(u[1] * vel2)
+        if pos_x > pos_w:
+            pos_x -= int(u[0] * vel1)
+            pos_w += int(u[0] * vel2)
+        else:
+            pos_x += int(u[0] * vel1)
+            pos_w -= int(u[0] * vel2)
+        
+        if pos_y > pos_z:
+            pos_y -= int(u[1] * vel1)
+            pos_z += int(u[1] * vel2)
+        else:
+            pos_y += int(u[1] * vel1)
+            pos_z -= int(u[1] * vel2)
     
     
         if pos_x == largura:
@@ -79,7 +119,7 @@ while mexer:
         
     
     pg.display.update()        
-    pg.time.wait(60)
+    pg.time.wait(30)
     
         
             
