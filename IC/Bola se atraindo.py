@@ -94,19 +94,11 @@ while mexer:
         vel1 = vel1 + acc1
         vel2 = vel2 + acc2
         
-        if pos_x > pos_w:
-            pos_x -= int(u[0] * vel1)
-            pos_w += int(u[0] * vel2)
-        else:
-            pos_x += int(u[0] * vel1)
-            pos_w -= int(u[0] * vel2)
+        pos_x -= int(u[0] * (vel1)*10)
+        pos_y -= int(u[1] * (vel1)*10)
         
-        if pos_y > pos_z:
-            pos_y -= int(u[1] * vel1)
-            pos_z += int(u[1] * vel2)
-        else:
-            pos_y += int(u[1] * vel1)
-            pos_z -= int(u[1] * vel2)
+        pos_w += int(u[0] * (vel2)*10)
+        pos_z += int(u[1] * (vel2)*10)
     
     
         if pos_x == largura:
@@ -119,9 +111,6 @@ while mexer:
         
     
     pg.display.update()        
-    pg.time.wait(30)
-    
-        
-            
+    pg.time.wait(45)
 
 pg.quit()
