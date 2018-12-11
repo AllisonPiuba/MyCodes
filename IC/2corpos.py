@@ -1,7 +1,6 @@
 import pygame as pg
 from random import randrange
 import math
-import numpy as np
 
 laranja=(255,140,0)	
 preto=(0,0,0)
