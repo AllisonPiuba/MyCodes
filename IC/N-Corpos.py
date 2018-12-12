@@ -16,7 +16,7 @@ largura = 1024
 altura = 720
 tamanho_min = 5
 tamanho_max = 15
-G = G = 6.673*10**(11)
+G = 6.673*10**(11)
 
 def delta (x1, x2):
     return x1 - x2
@@ -26,6 +26,8 @@ def grav(corpos):
    ux =  np.zeros( (n,n) ) 
    uy =  np.zeros( (n,n) )
    F =  np.zeros( (n,n) )
+   Acc1 = np.zeros( (n,n) )
+   Acc2 = np.zeros( (n,n) )
    for i in range (n):
        for j in range (n):
            deltax = (corpos[i][0] - corpos[j][0])  
@@ -35,16 +37,19 @@ def grav(corpos):
                ux[i][j] = deltax/d[i][j]
                uy[i][j] = deltay/d[i][j]
                F[i][j] = (G * corpos[i][2] * corpos[j][2])/d[i][j]**2
+               Acc1[i][j] = F[i][j]/corpos[i][2]
+               Acc2[i][j] = F[i][j]/corpos[j][2]
            else:
                ux[i][j] = uy[i][j] = 0
                F[i][j] = 0
+               Acc1[i][j] = Acc2[i][j] = 0
                
            
   
    
    # may the force be with you
       
-   return d, ux, uy, F
+   return d, ux, uy, F, Acc1, Acc2
 
 
 
@@ -59,7 +64,7 @@ coordenadas_y = np.random.randint(0, altura, (n,1))
 massa = np.random.randint(tamanho_min, tamanho_max, (n,1))
 corpos = np.hstack([coordenadas_x, coordenadas_y, massa])
 
-D, ux, uy, F = grav(corpos)
+D, ux, uy, F, Acc1, Acc2 = grav(corpos)
 
 #%%
 troca_em_x = False
@@ -79,7 +84,8 @@ while mexer:
         
         
         for x, y, tamanho in corpos:
-            pg.draw.circle(fundo, laranja, [x, y], tamanho)        
+            pg.draw.circle(fundo, laranja, [x, y], tamanho)  
+            
     
     pg.display.update()        
     pg.time.wait(45)
